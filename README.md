@@ -1,20 +1,92 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+EquipTrack — Real-Time Equipment Inventory System
 
-# Run and deploy your AI Studio app
+🔗 Live Demo: https://equip-trace.vercel.app
+📦 GitHub Repo: https://github.com/Wildfoxie/equip-trace
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/6527fb19-20e9-450e-a59a-c12c6637fad8
+## Overview
 
-## Run Locally
+Trackr is a mobile-first equipment inventory tracking system designed for high-pressure environments like school gyms, IT departments, and community centers.
 
-**Prerequisites:**  Node.js
+Unlike traditional inventory tools that focus on data entry and reporting, Trackr is built for **real-time action** — helping staff check items in and out within seconds, manage bulk operations, and maintain accountability without slowing down.
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## The Problem
+
+In most institutions:
+
+- Equipment is tracked using spreadsheets or paper logs  
+- Items go missing with no clear ownership trail  
+- Damage is rarely recorded properly  
+- Staff waste time managing queues and searching for items  
+
+The result: **lost equipment, unresolved disputes, and operational chaos**
+
+---
+
+## Solution
+
+Trackr introduces a **scan-first workflow system** that minimizes friction and maximizes speed.
+
+> “Scan first. Think later.”
+
+Every action — check-out, return, damage logging — starts with a barcode scan, reducing errors and saving time.
+
+---
+
+## Key Features
+
+### ⚡ Instant Check-In / Check-Out
+- Scan item → scan user → done in seconds  
+- No typing or manual searching  
+
+---
+
+### Bulk Operations (Core Feature)
+- Start a bulk session  
+- Scan multiple items continuously  
+- Assign to a user in one step  
+
+Designed for real-world scenarios like issuing 20+ items at once.
+
+---
+
+### 👀 Live Status System
+- Visual overview of all items:
+  - Available  
+  - Checked Out  
+  - Overdue  
+  - Damaged / Lost  
+
+---
+
+### Damage & Loss Logging
+- Scan item → report issue  
+- Add tags + optional notes/photo  
+
+---
+
+### Overdue Tracking & Nudges
+- Auto-flag overdue items  
+- See who has them instantly  
+- Send reminders with one tap  
+
+---
+
+### Permission Control
+- Prevent checkout if:
+  - User has overdue items  
+  - User exceeds limits  
+
+---
+
+## Tech Stack
+
+- **Frontend:** React + TypeScript  
+- **Build Tool:** Vite / Next.js (update based on your setup)  
+- **Deployment:** Vercel  
+- **(Optional):** Firebase / Supabase for backend  
+
+---
