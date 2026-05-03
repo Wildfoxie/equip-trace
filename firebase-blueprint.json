@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "Item": {
+      "title": "Equipment Item",
+      "description": "A single piece of equipment (sports, IT, etc.)",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "barcodeId": { "type": "string", "description": "Unique identifier for scanning" },
+        "status": { "type": "string", "enum": ["available", "checked_out", "overdue", "damaged", "lost"] },
+        "holderId": { "type": "string", "description": "UID of the current user holding the item" },
+        "holderName": { "type": "string" },
+        "condition": { "type": "string" },
+        "lastActionAt": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "barcodeId", "status"]
+    },
+    "User": {
+      "title": "App User / Holder",
+      "description": "A person who can check out equipment",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "barcodeId": { "type": "string", "description": "Unique ID on their NFC/Barcode card" },
+        "role": { "type": "string", "enum": ["student", "staff", "employee", "admin"] },
+        "email": { "type": "string", "format": "email" },
+        "itemLimit": { "type": "integer" },
+        "checkedOutCount": { "type": "integer" },
+        "hasOverdue": { "type": "boolean" }
+      },
+      "required": ["name", "barcodeId", "role"]
+    },
+    "Log": {
+      "title": "Inventory Log",
+      "description": "History of actions performed on items",
+      "type": "object",
+      "properties": {
+        "itemId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "action": { "type": "string", "enum": ["check_out", "check_in", "report_issue", "add_item", "update_item"] },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "details": { "type": "string" }
+      },
+      "required": ["itemId", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/items/{itemId}": {
+      "schema": "Item",
+      "description": "Collection of all equipment items"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of persons who can check out items"
+    },
+    "/logs/{logId}": {
+      "schema": "Log",
+      "description": "Audit trail of all inventory movements"
+    },
+    "/admins/{adminId}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      },
+      "description": "List of authorized administrator UIDs"
+    }
+  }
+}

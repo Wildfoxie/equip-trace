@@ -1,0 +1,6 @@
+{
+  "name": "EquipTrace AI",
+  "description": "Mobile-first equipment inventory tracking for schools, gyms, and IT departments. High-speed scanning, bulk check-in/out, and real-time status dashboard.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": []
+}

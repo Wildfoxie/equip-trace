@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'anichia145@gmail.com'
+      );
+    }
+
+    function isStaff() {
+      return isSignedIn() && (
+        isAdmin() ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['staff', 'admin']
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidItem(data) {
+      return data.keys().hasAll(['name', 'barcodeId', 'status']) &&
+             data.name is string && data.name.size() <= 200 &&
+             data.barcodeId is string && data.barcodeId.size() <= 100 &&
+             data.status in ['available', 'checked_out', 'overdue', 'damaged', 'lost'] &&
+             (data.get('holderId', null) == null || (data.holderId is string && isValidId(data.holderId))) &&
+             (data.get('holderName', null) == null || data.holderName is string) &&
+             (data.get('category', null) == null || data.category is string) &&
+             (data.get('condition', null) == null || data.condition is string) &&
+             (data.get('notes', null) == null || data.notes is string) &&
+             (data.get('lastActionAt', null) == null || data.lastActionAt is timestamp) &&
+             (data.get('dueDate', null) == null || data.dueDate is timestamp);
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['name', 'barcodeId', 'role']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.barcodeId is string && data.barcodeId.size() <= 100 &&
+             data.role in ['student', 'staff', 'employee', 'admin'] &&
+             (data.get('email', null) == null || (data.email is string && data.email.size() <= 200)) &&
+             (data.get('itemLimit', null) == null || data.itemLimit is int) &&
+             (data.get('checkedOutCount', null) == null || data.checkedOutCount is int) &&
+             (data.get('hasOverdue', null) == null || data.hasOverdue is bool);
+    }
+
+    function isValidLog(data) {
+      return data.keys().hasAll(['itemId', 'action', 'timestamp']) &&
+             data.itemId is string && isValidId(data.itemId) &&
+             data.action in ['check_out', 'check_in', 'report_issue', 'add_item', 'update_item'] &&
+             data.timestamp == request.time &&
+             (data.get('userId', null) == null || (data.userId is string && isValidId(data.userId))) &&
+             (data.get('userName', null) == null || data.userName is string) &&
+             (data.get('itemName', null) == null || data.itemName is string) &&
+             (data.get('details', null) == null || data.details is string);
+    }
+
+    // --- Collection Rules ---
+
+    match /items/{itemId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn(); // For mobile dash, but should we restrict? Maybe search by barcode is common.
+      
+      allow create: if isAdmin() && isValidItem(incoming()) && isValidId(itemId);
+      
+      allow update: if isSignedIn() && isValidItem(incoming()) && (
+        isAdmin() ||
+        (isStaff() && (
+          // Action: Check Out / In / Status Change
+          incoming().diff(existing()).affectedKeys().hasOnly(['status', 'holderId', 'holderName', 'lastActionAt', 'dueDate', 'notes', 'condition'])
+        ))
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn(); // Needed for scanning holder ID
+      allow list: if isStaff();
+      
+      allow create: if isAdmin() && isValidUser(incoming()) && isValidId(userId);
+      
+      allow update: if isSignedIn() && isValidUser(incoming()) && (
+        isAdmin() ||
+        (isStaff() && incoming().diff(existing()).affectedKeys().hasOnly(['checkedOutCount', 'hasOverdue'])) ||
+        (request.auth.uid == userId && incoming().diff(existing()).affectedKeys().hasOnly(['name']))
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    match /logs/{logId} {
+      allow read: if isStaff();
+      allow create: if isSignedIn() && isValidLog(incoming());
+      allow update, delete: if false; // Logs are immutable
+    }
+
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}
