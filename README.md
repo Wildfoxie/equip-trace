@@ -1,4 +1,4 @@
-EquipTrack — Real-Time Equipment Inventory System
+EquipTrace — Real-Time Equipment Inventory System
 
 🔗 Live Demo: https://equip-trace.vercel.app
 📦 GitHub Repo: https://github.com/Wildfoxie/equip-trace
@@ -7,7 +7,7 @@ EquipTrack — Real-Time Equipment Inventory System
 
 ## Overview
 
-Trackr is a mobile-first equipment inventory tracking system designed for high-pressure environments like school gyms, IT departments, and community centers.
+EquipTrace is a mobile-first equipment inventory tracking system designed for high-pressure environments like school gyms, IT departments, and community centers.
 
 Unlike traditional inventory tools that focus on data entry and reporting, Trackr is built for **real-time action** — helping staff check items in and out within seconds, manage bulk operations, and maintain accountability without slowing down.
 
@@ -28,7 +28,7 @@ The result: **lost equipment, unresolved disputes, and operational chaos**
 
 ## Solution
 
-Trackr introduces a **scan-first workflow system** that minimizes friction and maximizes speed.
+EquipTrace introduces a **scan-first workflow system** that minimizes friction and maximizes speed.
 
 > “Scan first. Think later.”
 
