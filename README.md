@@ -1,7 +1,7 @@
 EquipTrace — Real-Time Equipment Inventory System
 
-🔗 Live Demo: https://equip-trace.vercel.app
-📦 GitHub Repo: https://github.com/Wildfoxie/equip-trace
+Live Demo: https://equip-trace.vercel.app
+GitHub Repo: https://github.com/Wildfoxie/equip-trace
 
 ---
 
